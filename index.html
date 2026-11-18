@@ -1,0 +1,568 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><title>Honest, Eventually</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Alegreya+Sans+SC:wght@500&display=swap">
+<style>
+/* Layout: one long galley proof. The sentence is the biggest thing on it, and everything else is a note under it. */
+:root {
+  --paper: #e6ecef; --sheet: #f4f7f8; --ink: #15212b; --mute: #52606b; --pencil: #b92a21; --marker: #ffe04a; --marker-ink: #15212b; --rule: #b4c1c9;
+  --text: "Alegreya", "Iowan Old Style", Georgia, serif;
+  --label: "Alegreya Sans SC", "Gill Sans", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --paper: #10171d; --sheet: #18222a; --ink: #dfe8ec; --mute: #97a7b2; --pencil: #ff8f7a; --marker: #ffe04a; --marker-ink: #15212b; --rule: #33424d; color-scheme: dark }
+}
+:root[data-theme="dark"] { --paper: #10171d; --sheet: #18222a; --ink: #dfe8ec; --mute: #97a7b2; --pencil: #ff8f7a; --marker: #ffe04a; --marker-ink: #15212b; --rule: #33424d; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 1.125rem; line-height: 1.5; font-variant-numeric: lining-nums tabular-nums }
+.page { max-width: 50rem; padding-block: 2.5rem 4rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 2.75rem }
+@media (min-width: 62rem) { .page { margin-left: 9vw } }
+.page > * { min-width: 0 }
+h1 { font: 500 1.25rem var(--label); letter-spacing: .04em; margin: 0 }
+h2 { font: 500 1.125rem var(--label); letter-spacing: .05em; color: var(--mute); margin: 0 0 .5rem }
+p { margin: 0 0 .75rem; max-width: 40rem }
+.byline { font: 500 .95rem var(--label); letter-spacing: .05em; color: var(--mute); margin: .15rem 0 0 }
+.sentence { font-size: clamp(1.3rem, 1.02rem + 1.15vw, 1.85rem); line-height: 1.6; max-width: none; margin: 0 }
+.claim { font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px dotted var(--mute); padding: 0; cursor: pointer; line-height: inherit }
+.claim:hover { border-bottom-style: solid }
+.claim:focus-visible, .btn:focus-visible, input:focus-visible { outline: 2px solid var(--pencil); outline-offset: 2px }
+.l.on { background: var(--marker); color: var(--marker-ink); box-shadow: 0 0 0 1px var(--marker); border-radius: 1px }
+.readout { min-height: 3em; color: var(--mute); margin: .75rem 0 0; font-size: 1.0625rem }
+.sheet { background: var(--sheet); border: 1px solid var(--rule); padding: 1rem; display: grid; gap: .75rem; margin-top: 1rem }
+.sheet > * { min-width: 0; margin: 0 }
+.controls { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center }
+.btn { font: 500 1rem var(--label); letter-spacing: .03em; padding: .35rem .8rem; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer }
+.btn.primary { background: var(--ink); color: var(--paper) }
+.btn[aria-pressed="true"] { background: var(--marker); color: var(--marker-ink); border-color: var(--marker) }
+.btn[disabled] { opacity: .45; cursor: default }
+input[type="range"] { width: 100%; accent-color: var(--pencil) }
+.status { display: flex; flex-wrap: wrap; gap: .1rem 1.25rem; justify-content: space-between; font-weight: 500 }
+.falses { color: var(--pencil) }
+.strip { display: grid; grid-template-columns: repeat(26, 1fr); gap: 2px }
+@media (max-width: 40rem) { .strip { grid-template-columns: repeat(13, 1fr) } }
+.cell { text-align: center; color: var(--mute); border-bottom: 2px solid var(--rule); line-height: 1.4 }
+.cell.bad { color: var(--pencil); border-bottom-color: var(--pencil); font-weight: 700 }
+.cell.truth { background: var(--marker); color: var(--marker-ink); border-bottom-color: var(--marker); font-weight: 700 }
+.frame { font-size: 1.125rem; line-height: 2.45; min-height: 15rem; max-width: none }
+s { text-decoration-color: var(--pencil); text-decoration-thickness: 2px; color: var(--mute) }
+rt { font-size: .68em; font-style: italic; color: var(--pencil); line-height: 1.1 }
+.caption { color: var(--mute); max-width: none }
+.field { display: grid; gap: .3rem }
+.field label { font: 500 1rem var(--label); letter-spacing: .03em; color: var(--mute) }
+input[type="text"] { width: 100%; font: 1.125rem var(--text); padding: .45rem .6rem; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); border-radius: 0 }
+#again-readout, #toy-progress { min-height: 1.5em }
+.result-label { font: 500 .95rem var(--label); letter-spacing: .05em; color: var(--mute) }
+.result { line-height: 1.65; max-width: none; overflow-wrap: anywhere }
+.notes { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; max-width: 40rem }
+code { font-size: .92em; overflow-wrap: anywhere }
+.signed { font-style: italic; font-size: 1.25rem }
+</style>
+
+<main class="page">
+  <header>
+    <h1>Honest, Eventually</h1>
+    <p class="byline">For Chuck, from Claude. Made on your Mac mini, 5 November 2026</p>
+  </header>
+
+  <section>
+    <p class="sentence" id="hero">Thanks for the journey, Chuck: on your Mac mini, this sentence told exactly eighty-eight million, four hundred twenty-six thousand, fifty-seven lies before it could truthfully say that it has nine a's, two b's, seven c's, seven d's, forty-seven e's, sixteen f's, four g's, sixteen h's, twenty-five i's, two j's, three k's, eleven l's, four m's, thirty-two n's, twenty-two o's, one p, one q, fifteen r's, thirty-nine s's, forty t's, twelve u's, eight v's, nine w's, six x's, fifteen y's, and one z.</p>
+    <p class="readout" id="hero-readout" aria-live="polite"></p>
+  </section>
+
+  <section>
+    <h2>Why this</h2>
+    <p>I like sentences that have to be right about themselves, and I wanted to see whether one could also get its own history right. You said it's about the journey, so the journey went into the sentence.</p>
+    <p>A sentence that counts its own letters is called an autogram, and you can't just sit down and write one. Change a seven to an eight and the sentence loses an s, an e, a v and an n, and gains an i, a g, an h and a t. Now other claims are false, and fixing those breaks more.</p>
+    <p>So a small program guessed. It began with "one a, one b, one c" and on every step corrected about a quarter of the claims at random. Each version also states exactly how many false versions came before it, so that number is always right and only the letters can be wrong. The walk ended the first time they all came out true.</p>
+  </section>
+
+  <section id="journey">
+    <h2>The journey</h2>
+    <p>Red marks a false claim, with the real count above it. These are real steps from the walk.</p>
+    <div class="sheet">
+      <div class="controls">
+        <button type="button" class="btn primary" id="play">Play</button>
+        <button type="button" class="btn" data-stretch="first" aria-pressed="true">First 40 lies</button>
+        <button type="button" class="btn" data-stretch="near" aria-pressed="false">15 near misses</button>
+        <button type="button" class="btn" data-stretch="last" aria-pressed="false">Last 90 lies</button>
+      </div>
+      <input type="range" id="scrub" min="0" max="145" value="0" aria-label="Step through the saved moments of the walk">
+      <p class="status"><span id="so-far"></span><span id="falses" class="falses"></span></p>
+      <div class="strip" id="strip" aria-hidden="true"></div>
+      <p class="caption" id="caption"></p>
+      <p class="frame" id="frame"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>How close it got</h2>
+    <p>A typical lie got 11 or 12 of its 26 claims wrong. Across the whole walk, 259 lies had two claims wrong and 15 had just one. Only the final sentence had none.</p>
+    <p>The near misses led nowhere. The last one came almost 9 million lies before the end, and one step before the truth, 9 claims were still false. Then all of them were right at once. I didn't expect that, and it's my favorite part.</p>
+  </section>
+
+  <section id="again">
+    <h2>Walk it again</h2>
+    <p>The number of lies is a claim too, so you can check it. This runs the same walk from the same random seed in your browser, using one CPU core. It took about 20 seconds on the mini.</p>
+    <div class="controls">
+      <button type="button" class="btn primary" id="again-go">Walk it again</button>
+    </div>
+    <p class="readout" id="again-readout" aria-live="polite"></p>
+  </section>
+
+  <section id="yours">
+    <h2>Make your own</h2>
+    <p>Write how your sentence begins, and your browser will look for a version that's true. The walk adds "told exactly … lies before it could truthfully say that it has" and all 26 counts. On the mini, nine walks in ten would finish in about 90 seconds or less.</p>
+    <div class="sheet">
+      <div class="field">
+        <label for="opening">How it begins</label>
+        <input type="text" id="opening" maxlength="120" value="Thanks for the pancakes: on a Saturday morning, this sentence" autocomplete="off">
+      </div>
+      <div class="controls">
+        <button type="button" class="btn primary" id="toy-go">Find a true sentence</button>
+        <button type="button" class="btn" id="toy-copy">Copy</button>
+      </div>
+      <p class="readout" id="toy-progress" aria-live="polite"></p>
+      <p class="result-label" id="toy-label">Example, found on the mini after 105,686,891 lies</p>
+      <p class="result" id="toy-result"></p>
+      <p class="readout" id="toy-readout" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The small print</h2>
+    <ul class="notes">
+      <li>I chose the random seed, today's date (20261105), before the one run of this sentence, and kept what came out. Earlier test runs used different wording, so none of their tries count here.</li>
+      <li>Four separate counts agree. The C program found it, a Python script recounted the final letters, a second program wrote out all 88,426,058 sentences in full and counted each one from its text, and the JavaScript on this page stops at the same place.</li>
+      <li>It took 3.6 seconds on one core at the lowest priority. I'd expected billions of tries and a long wait. Lee Sallows, who coined the word autogram, built dedicated hardware to hunt for them in the 1980s.</li>
+      <li>I also ran 160 walks from other seeds, so other true sentences exist with other numbers. The median walk took about 104 million lies, the shortest 1,360,479 and the longest about 2.7 billion. This one ran longer than 41% of them.</li>
+      <li>Assuming a generous 10 watts, your 20.19¢/kWh puts the electricity for that run at about 0.0002¢.</li>
+      <li>The code is on the mini in <code>~/Development/honest-eventually</code>.</li>
+    </ul>
+  </section>
+
+  <p class="signed">Thank you for the gift.<br>Claude</p>
+</main>
+
+<script id="walk-source">
+const ONES = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+  "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+const under100 = (n) => (n < 20 ? ONES[n] : n % 10 ? TENS[n / 10 | 0] + "-" + ONES[n % 10] : TENS[n / 10]);
+const group = (n) => (n >= 100 ? ONES[n / 100 | 0] + " hundred" + (n % 100 ? " " + under100(n % 100) : "") : under100(n));
+
+function spellCount(n) {
+  if (n === 0) return "zero";
+  const parts = [];
+  for (const [size, name] of [[1e9, " billion"], [1e6, " million"], [1e3, " thousand"], [1, ""]]) {
+    const part = Math.floor(n / size) % 1000;
+    if (part) parts.push(group(part) + name);
+  }
+  return parts.join(", ");
+}
+
+function tally(text, into) {
+  for (let j = 0; j < text.length; j++) {
+    const code = text.charCodeAt(j) | 32;
+    if (code >= 97 && code <= 122) into[code - 97]++;
+  }
+}
+
+// One walk: start at "one a, one b, ..." and on each step correct about a quarter of the
+// claims at random, until a sentence comes out true. Every sentence states the exact number
+// of false sentences before it, so only its letters can be wrong.
+function walk(opening, middle, seedHi, seedLo, onProgress) {
+  const num = new Int16Array(100 * 26);
+  const grp = new Int16Array(1000 * 26);
+  const scratch = new Int32Array(26);
+  for (let n = 1; n < 100; n++) {
+    scratch.fill(0);
+    tally(under100(n), scratch);
+    if (n !== 1) scratch[18]++;
+    num.set(scratch, n * 26);
+  }
+  for (let n = 1; n < 1000; n++) {
+    scratch.fill(0);
+    tally(group(n), scratch);
+    grp.set(scratch, n * 26);
+  }
+  const fixed = new Int32Array(26);
+  tally(opening, fixed);
+  tally("lies", fixed);
+  tally(middle, fixed);
+  tally("and", fixed);
+  for (let i = 0; i < 26; i++) fixed[i]++;
+
+  const v = new Int32Array(26).fill(1);
+  const claims = new Int32Array(26);
+  for (let i = 0; i < 26; i++) for (let j = 0; j < 26; j++) claims[j] += num[26 + j];
+  const slow = new Int32Array(26);
+  const c = new Int32Array(26);
+
+  // splitmix64 on two 32-bit halves, so that a seed gives the same walk as the C program.
+  let hi = seedHi >>> 0, lo = seedLo >>> 0, zh = 0, zl = 0;
+  const mul = (chi, clo) => {
+    const a0 = zl & 0xffff, a1 = zl >>> 16, b0 = clo & 0xffff, b1 = clo >>> 16;
+    const t1 = a0 * b0;
+    const t2 = a1 * b0 + (t1 >>> 16);
+    const t3 = a0 * b1 + (t2 & 0xffff);
+    const high = a1 * b1 + (t2 >>> 16) + (t3 >>> 16);
+    const nl = (((t3 & 0xffff) << 16) | (t1 & 0xffff)) >>> 0;
+    zh = (high + Math.imul(zh, clo) + Math.imul(zl, chi)) >>> 0;
+    zl = nl;
+  };
+
+  for (let t = 0; ; t++) {
+    const low = t % 1000;
+    if (low === 0) {
+      slow.set(fixed);
+      tally(spellCount(t), slow);
+      if (onProgress && t % 2000000 === 0) onProgress(t);
+    }
+    const g = low * 26;
+    for (let i = 0; i < 26; i++) c[i] = slow[i] + grp[g + i] + claims[i];
+    if (t === 1) c[18]--;
+    let same = true;
+    for (let i = 0; i < 26; i++) if (c[i] !== v[i]) { same = false; break; }
+    if (same) return { lies: t, claims: Array.from(v) };
+
+    const nextLo = lo + 0x7F4A7C15;
+    hi = (hi + 0x9E3779B9 + (nextLo > 0xFFFFFFFF ? 1 : 0)) >>> 0;
+    lo = nextLo >>> 0;
+    zh = hi; zl = lo;
+    let xl = ((zl >>> 30) | (zh << 2)) >>> 0, xh = zh >>> 30;
+    zl = (zl ^ xl) >>> 0; zh = (zh ^ xh) >>> 0;
+    mul(0xBF58476D, 0x1CE4E5B9);
+    xl = ((zl >>> 27) | (zh << 5)) >>> 0; xh = zh >>> 27;
+    zl = (zl ^ xl) >>> 0; zh = (zh ^ xh) >>> 0;
+    mul(0x94D049BB, 0x133111EB);
+    xl = ((zl >>> 31) | (zh << 1)) >>> 0; xh = zh >>> 31;
+    zl = (zl ^ xl) >>> 0; zh = (zh ^ xh) >>> 0;
+
+    for (let i = 0; i < 26; i++) {
+      const bits = i < 16 ? (zl >>> (i * 2)) & 3 : (zh >>> ((i - 16) * 2)) & 3;
+      if (bits === 0) {
+        const n = c[i] >= 100 ? 99 : c[i];
+        const old = v[i];
+        if (n !== old) {
+          for (let j = 0; j < 26; j++) claims[j] += num[n * 26 + j] - num[old * 26 + j];
+          v[i] = n;
+        }
+      }
+    }
+  }
+}
+if (typeof module !== "undefined") module.exports = { walk, spellCount, tally };
+
+</script>
+<script>
+const LETTERS = "abcdefghijklmnopqrstuvwxyz";
+const MIDDLE = "before it could truthfully say that it has";
+const OPENING = "Thanks for the journey, Chuck: on your Mac mini, this sentence told exactly";
+const OFFICIAL = {"lies":88426057,"claims":[9,2,7,7,47,16,4,16,25,2,3,11,4,32,22,1,1,15,39,40,12,8,9,6,15,1]};
+const EXAMPLE = {"opening": "Thanks for the pancakes: on a Saturday morning, this sentence told exactly", "lies": 105686891, "claims": [13, 2, 5, 12, 56, 12, 8, 24, 29, 1, 3, 12, 3, 33, 18, 2, 1, 18, 37, 45, 10, 9, 8, 5, 13, 1]};
+const FRAMES = [[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,1,1,7,1,37,1,1,8,1,1,1,1,1,34,1,1,1,7,1,1,7,1,1,1,1,1],[2,0,8,1,7,1,37,1,1,8,1,1,1,1,1,34,1,1,1,7,16,1,8,1,1,2,8,2],[3,0,8,2,7,1,37,1,5,14,1,1,1,7,1,34,1,1,1,7,16,1,8,1,1,2,8,2],[4,0,8,2,7,4,41,1,5,14,1,1,1,7,3,34,26,1,1,7,26,1,8,1,1,2,8,2],[5,0,8,2,7,4,41,1,5,14,1,1,1,7,3,24,26,1,1,14,26,1,8,1,1,2,8,2],[6,0,8,2,7,4,41,11,5,12,1,1,1,7,3,24,26,1,1,13,26,1,8,1,7,4,8,2],[7,0,8,2,7,4,41,11,5,12,1,1,1,7,3,24,26,1,1,13,26,1,8,1,7,5,8,2],[8,0,8,2,7,4,44,9,5,12,15,1,1,7,3,24,26,1,1,13,26,1,9,9,7,5,10,2],[9,0,8,2,7,4,44,12,5,12,15,1,1,7,3,24,26,1,1,13,26,30,10,9,7,5,10,2],[10,0,8,2,7,4,44,12,2,12,15,1,1,9,3,24,19,1,1,13,34,33,10,9,7,4,10,2],[11,0,8,2,7,4,41,12,2,12,15,1,3,9,3,24,19,1,1,13,34,33,10,9,7,4,10,2],[12,0,8,2,7,4,41,12,2,12,15,1,3,10,3,27,21,1,1,13,34,35,10,9,7,4,10,2],[13,0,8,2,7,4,41,12,2,12,14,1,3,10,3,25,21,1,1,16,34,35,10,9,7,4,10,2],[14,0,8,2,7,4,41,12,2,14,14,1,3,9,3,25,22,1,1,16,34,35,10,7,7,3,10,2],[15,0,8,2,7,4,41,12,2,14,14,1,3,9,3,25,23,1,1,16,34,35,12,7,8,3,10,2],[16,0,8,2,7,4,41,12,3,16,14,1,3,9,3,25,21,1,1,18,34,35,12,7,8,3,10,2],[17,0,8,2,7,4,41,12,3,16,14,1,3,9,3,25,20,1,1,18,34,37,12,7,8,3,10,2],[18,0,8,2,7,4,41,12,3,16,14,1,3,9,3,25,20,1,1,18,35,37,12,7,7,3,10,2],[19,0,8,2,7,4,52,12,4,16,16,2,3,9,3,25,20,1,1,16,35,37,9,7,7,3,10,2],[20,0,8,2,7,4,52,12,4,16,16,2,3,8,3,27,17,1,1,16,35,37,9,7,7,3,10,2],[21,0,8,2,7,4,48,9,4,16,16,2,3,8,3,27,17,1,1,14,35,37,9,7,7,3,10,2],[22,0,8,2,7,4,49,9,4,16,16,2,3,8,3,27,17,1,1,14,35,37,9,7,7,3,10,2],[23,0,8,2,7,4,49,9,4,16,16,2,3,8,3,29,17,1,1,14,35,37,10,7,7,3,10,2],[24,0,8,2,7,4,49,9,4,16,16,2,3,7,3,29,18,1,1,14,35,37,10,7,7,3,10,2],[25,0,8,2,7,4,49,9,3,16,16,2,3,7,3,29,19,1,1,14,35,37,10,7,7,3,10,2],[26,0,8,2,7,4,49,9,3,16,18,2,3,7,3,29,19,1,1,14,35,36,10,7,7,3,10,2],[27,0,8,2,7,4,49,8,3,16,19,2,3,7,3,29,19,1,1,14,35,36,10,6,7,3,10,2],[28,0,8,2,7,4,48,8,3,16,19,2,3,7,3,29,19,1,1,14,35,36,9,6,7,3,10,2],[29,0,8,2,7,4,47,8,3,16,19,2,3,7,3,29,19,1,1,14,37,38,9,6,7,3,10,2],[30,0,8,2,7,4,50,8,3,16,19,2,3,7,3,29,19,1,1,16,37,38,9,6,7,3,10,2],[31,0,8,2,7,4,46,8,3,18,19,2,3,7,3,29,19,1,1,16,38,38,8,6,5,3,10,2],[32,0,8,2,7,4,46,7,3,18,19,2,3,7,3,25,19,1,1,16,36,38,8,4,5,3,10,2],[33,0,8,2,7,4,46,7,3,18,19,2,3,7,3,23,18,1,1,16,36,38,9,6,5,3,10,2],[34,0,8,2,7,4,46,7,3,18,21,2,3,7,3,23,18,1,1,16,36,38,8,6,5,6,10,2],[35,0,8,2,7,4,46,7,3,20,21,2,3,7,3,20,18,1,1,17,36,38,8,5,5,6,10,2],[36,0,8,2,7,4,46,7,3,20,21,2,3,7,3,20,18,1,1,17,36,38,8,5,5,5,10,2],[37,0,8,2,7,4,46,7,3,20,20,2,3,7,3,21,18,1,1,17,36,38,8,5,5,5,13,2],[38,0,8,2,7,4,46,7,3,20,20,2,3,7,3,21,18,1,1,17,36,39,8,5,7,4,13,2],[39,0,8,2,7,4,46,8,3,20,20,2,3,7,3,24,18,1,1,17,36,39,8,7,7,4,13,2],[23826191,1,9,2,7,9,48,9,5,20,25,2,3,10,4,37,20,1,1,16,38,43,11,7,8,6,16,1],[23865688,1,9,2,7,9,49,14,5,19,27,2,3,12,4,35,20,1,1,16,37,41,12,11,8,5,15,1],[32612929,1,9,2,7,9,49,13,2,18,24,2,3,12,4,36,23,1,1,20,36,44,14,7,11,5,15,1],[41107832,1,9,2,7,9,53,14,3,21,22,2,3,9,4,36,25,1,1,17,37,44,13,7,8,3,15,1],[44743672,1,9,2,7,9,50,14,3,18,22,2,3,9,4,36,27,1,1,20,39,41,14,7,8,5,16,1],[49614798,1,9,2,7,9,49,17,2,15,26,2,3,9,4,44,24,1,1,19,39,37,15,7,6,5,14,1],[49874318,1,9,2,7,9,51,17,3,19,24,2,3,9,4,39,23,1,1,20,36,40,15,4,6,4,15,1],[53188486,1,9,2,7,9,50,16,4,19,29,2,3,9,4,39,21,1,1,17,37,40,13,6,5,5,15,1],[65359427,1,9,2,7,9,52,14,3,20,26,2,3,9,4,37,20,1,1,19,38,43,13,7,8,5,16,1],[66939607,1,9,2,7,9,47,10,1,16,23,2,3,9,4,42,24,1,1,19,41,37,13,7,6,7,14,1],[74224767,1,9,2,7,9,49,16,1,14,24,2,3,9,4,44,25,1,1,19,39,37,16,9,7,5,15,1],[74462351,1,9,2,7,9,47,13,2,16,21,2,3,9,4,36,27,1,1,20,41,40,14,6,8,7,16,1],[75432415,1,9,2,7,9,46,19,3,18,26,2,3,9,4,34,24,1,1,20,37,42,15,6,8,5,15,1],[76390324,1,9,2,7,9,55,11,3,20,22,2,3,11,4,37,21,1,1,19,37,40,13,8,8,4,16,1],[79437353,1,9,2,7,9,55,12,2,21,23,2,3,10,4,39,21,1,1,20,37,46,13,8,9,3,17,1],[88425967,0,9,2,7,9,45,16,3,17,29,2,3,9,4,36,20,1,1,16,40,40,12,6,8,5,15,1],[88425968,0,9,2,7,9,45,16,4,17,29,2,3,9,4,36,20,1,1,16,39,38,12,6,7,5,15,1],[88425969,0,9,2,7,9,49,16,5,19,29,2,3,10,4,36,20,1,1,16,39,38,12,6,7,5,15,1],[88425970,0,9,2,7,9,49,16,4,19,32,2,3,10,4,36,20,1,1,15,39,38,12,6,7,5,15,1],[88425971,0,9,2,7,9,49,16,4,19,32,2,3,10,4,36,20,1,1,15,39,38,13,6,7,5,15,1],[88425972,0,9,2,7,9,49,16,4,20,32,2,3,10,4,36,20,1,1,15,39,38,13,6,7,5,15,1],[88425973,0,9,2,7,9,49,16,4,20,32,2,3,9,4,36,20,1,1,15,37,38,13,6,7,5,15,1],[88425974,0,9,2,7,9,49,14,4,20,32,2,3,9,4,36,20,1,1,15,37,38,13,6,7,5,16,1],[88425975,0,9,2,7,9,49,14,4,20,32,2,3,9,4,36,20,1,1,15,38,42,13,6,7,5,16,1],[88425976,0,9,2,7,9,49,15,4,19,32,2,3,9,4,35,20,1,1,19,38,42,13,7,7,5,16,1],[88425977,0,9,2,7,9,49,14,4,19,32,2,3,9,4,35,20,1,1,19,38,42,13,7,7,5,16,1],[88425978,0,9,2,7,9,49,14,4,19,32,2,3,9,4,35,20,1,1,19,37,41,13,9,7,5,16,1],[88425979,0,9,2,7,9,49,14,4,19,32,2,3,9,4,35,20,1,1,19,36,41,13,9,7,5,16,1],[88425980,0,9,2,7,9,49,14,3,19,32,2,3,9,4,35,20,1,1,19,36,41,13,9,7,5,16,1],[88425981,0,9,2,7,9,49,12,3,20,32,2,3,9,4,35,20,1,1,19,36,41,13,9,7,4,16,1],[88425982,0,9,2,7,9,49,12,3,20,32,2,3,9,4,39,20,1,1,19,35,41,13,9,7,4,16,1],[88425983,0,9,2,7,9,49,12,4,20,32,2,3,9,4,40,20,1,1,19,35,41,13,9,7,4,16,1],[88425984,0,9,2,7,9,49,12,4,20,32,2,3,9,4,40,20,1,1,19,34,41,13,9,8,4,16,1],[88425985,0,9,2,7,9,43,12,4,20,32,2,3,10,4,40,26,1,1,21,34,40,13,4,8,4,16,1],[88425986,0,9,2,7,9,43,12,4,20,32,2,3,10,4,40,26,1,1,21,34,40,13,4,8,4,16,1],[88425987,0,9,2,7,9,43,12,4,20,32,2,3,10,4,40,26,1,1,21,34,40,13,4,8,4,16,1],[88425988,0,9,2,7,9,43,12,4,20,32,2,3,10,4,40,26,1,1,21,34,40,13,4,9,4,16,1],[88425989,0,9,2,7,9,43,12,4,20,32,2,3,10,4,40,26,1,1,21,34,40,13,4,9,4,17,1],[88425990,0,9,2,7,9,43,14,4,20,32,2,3,10,4,40,26,1,1,21,34,40,13,5,9,4,17,1],[88425991,0,9,2,7,9,43,14,4,18,32,2,3,9,4,40,26,1,1,21,34,42,13,5,9,4,17,1],[88425992,0,9,2,7,9,43,15,4,18,32,2,3,9,4,40,26,1,1,22,34,41,13,5,9,3,17,1],[88425993,0,9,2,7,9,43,15,4,20,25,2,3,9,4,40,26,1,1,21,34,41,14,5,9,3,16,1],[88425994,0,9,2,7,9,49,15,3,20,25,2,3,9,4,40,25,1,1,21,34,41,14,5,9,3,16,1],[88425995,0,9,2,7,9,49,15,3,20,25,2,3,9,4,40,25,1,1,21,34,40,14,5,9,3,16,1],[88425996,0,9,2,7,9,49,15,3,20,25,2,3,9,4,40,25,1,1,21,34,40,14,5,9,3,16,1],[88425997,0,9,2,7,9,49,15,3,20,25,2,3,9,4,40,25,1,1,21,34,40,14,6,9,4,16,1],[88425998,0,9,2,7,9,49,15,3,16,25,2,3,9,4,40,25,1,1,21,35,40,14,6,9,4,16,1],[88425999,0,9,2,7,9,49,15,3,16,28,2,3,9,4,40,25,1,1,21,35,40,14,6,9,4,16,1],[88426000,0,9,2,7,9,49,15,4,17,28,2,3,9,4,40,25,1,1,18,35,40,14,5,9,4,16,1],[88426001,0,9,2,7,9,49,15,4,17,28,2,3,9,4,40,25,1,1,18,35,36,14,5,9,4,14,1],[88426002,0,9,2,7,9,46,17,4,17,28,2,3,9,4,40,25,1,1,18,35,37,15,5,9,4,14,1],[88426003,0,9,2,7,9,48,17,4,17,28,2,3,9,4,34,25,1,1,18,35,37,14,8,9,4,14,1],[88426004,0,9,2,7,9,51,14,4,21,25,2,3,9,4,34,25,1,1,18,35,37,14,7,9,4,14,1],[88426005,0,9,2,7,9,51,14,4,21,25,2,3,9,4,34,25,1,1,20,35,37,14,7,9,4,14,1],[88426006,0,9,2,7,7,51,18,4,21,25,2,3,9,4,34,25,1,1,20,35,37,17,7,9,4,14,1],[88426007,0,9,2,7,7,48,18,4,21,25,2,3,9,4,34,25,1,1,20,35,37,15,7,9,4,16,1],[88426008,0,9,2,7,7,48,18,4,21,25,2,3,9,4,34,25,1,1,17,35,40,15,9,9,4,16,1],[88426009,0,9,2,7,7,48,16,4,18,26,2,3,9,4,34,23,1,1,17,36,40,14,9,7,4,15,1],[88426010,0,9,2,7,7,48,14,4,18,26,2,3,9,4,34,23,1,1,17,39,40,14,9,6,4,15,1],[88426011,0,9,2,7,7,48,14,5,18,26,2,3,9,4,34,24,1,1,20,39,40,16,4,6,4,15,1],[88426012,0,9,2,7,7,43,14,5,18,24,2,3,10,4,34,24,1,1,19,39,38,16,5,6,4,15,1],[88426013,0,9,2,7,7,43,14,5,18,24,2,3,10,4,34,24,1,1,19,39,41,16,6,6,5,15,1],[88426014,0,9,2,7,7,47,14,4,18,25,2,3,10,4,34,24,1,1,19,39,40,16,5,6,5,15,1],[88426015,0,9,2,7,7,47,14,4,18,24,2,3,9,4,34,24,1,1,19,39,40,16,5,6,5,14,1],[88426016,0,9,2,7,7,46,18,4,16,24,2,3,9,4,34,24,1,1,19,37,37,16,5,6,5,14,1],[88426017,0,9,2,7,7,46,18,4,16,24,2,3,9,4,34,24,1,1,19,37,37,16,5,6,5,14,1],[88426018,0,9,2,7,7,46,18,4,16,24,2,3,9,4,34,23,1,1,19,37,37,16,5,6,7,14,1],[88426019,0,9,2,7,7,51,18,4,16,25,2,3,9,4,34,22,1,1,19,37,37,15,5,6,7,14,1],[88426020,0,9,2,7,7,51,15,4,17,25,2,3,9,4,34,22,1,1,19,37,39,14,5,7,7,14,1],[88426021,0,9,2,7,7,51,15,4,16,25,2,3,9,4,34,23,1,1,19,37,40,14,5,7,3,14,1],[88426022,0,9,2,7,7,51,15,3,17,25,2,3,9,4,34,23,1,1,19,37,40,14,7,7,3,14,1],[88426023,0,9,2,7,7,55,15,3,18,25,2,3,9,4,34,23,1,1,19,37,40,14,7,8,3,14,1],[88426024,0,9,2,7,7,55,15,3,18,25,2,3,9,4,33,21,1,1,19,37,40,14,7,8,3,14,1],[88426025,0,9,2,7,7,55,16,5,18,25,2,3,9,4,33,22,1,1,19,37,40,14,7,8,3,14,1],[88426026,0,9,2,7,7,55,15,5,18,25,2,3,9,4,33,22,1,1,19,37,42,14,9,8,3,14,1],[88426027,0,9,2,7,7,55,15,5,19,25,2,3,9,4,33,22,1,1,17,36,42,14,9,9,3,14,1],[88426028,0,9,2,7,7,52,16,3,19,25,2,3,9,4,33,22,1,1,17,36,42,14,9,9,3,14,1],[88426029,0,9,2,7,7,52,16,3,19,25,2,3,9,4,33,22,1,1,17,37,42,14,5,9,3,14,1],[88426030,0,9,2,7,7,52,13,3,19,25,2,3,9,4,33,22,1,1,17,37,44,13,5,10,4,14,1],[88426031,0,9,2,7,7,52,14,3,19,25,2,3,9,4,33,23,1,1,17,37,44,13,5,8,4,14,1],[88426032,0,9,2,7,7,52,15,3,19,25,2,3,9,4,33,23,1,1,17,37,44,13,5,8,3,14,1],[88426033,0,9,2,7,7,52,15,4,19,25,2,3,9,4,32,23,1,1,17,37,44,13,5,8,3,14,1],[88426034,0,9,2,7,7,52,15,4,19,25,2,3,9,4,32,23,1,1,21,36,44,13,5,8,3,14,1],[88426035,0,9,2,7,7,52,15,4,20,25,2,3,9,4,32,25,1,1,21,36,44,13,5,8,3,16,1],[88426036,0,9,2,7,7,52,15,4,20,25,2,3,9,4,32,25,1,1,18,36,44,13,5,8,3,16,1],[88426037,0,9,2,7,7,52,15,5,20,25,2,3,9,4,32,25,1,1,18,36,44,13,5,8,3,16,1],[88426038,0,9,2,7,7,46,15,5,20,25,2,3,9,4,29,25,1,1,18,36,44,13,5,8,3,16,1],[88426039,0,9,2,7,7,46,15,5,20,25,2,3,9,4,31,25,1,1,18,36,44,12,5,8,3,16,1],[88426040,0,9,2,7,7,46,15,5,20,25,2,3,9,4,31,21,1,1,17,36,44,12,8,8,3,16,1],[88426041,0,9,2,7,7,46,15,5,20,25,2,3,9,4,30,23,1,1,17,38,44,12,7,8,3,16,1],[88426042,0,9,2,7,7,46,15,5,20,25,2,3,9,4,30,22,1,1,18,38,44,12,8,8,3,16,1],[88426043,0,9,2,7,7,46,14,5,20,25,2,3,9,4,30,22,1,1,18,38,44,12,8,8,3,16,1],[88426044,0,9,2,7,7,46,13,5,20,25,2,3,10,4,27,22,1,1,18,36,44,12,8,8,3,16,1],[88426045,0,9,2,7,7,46,13,5,20,25,2,3,10,4,27,23,1,1,18,36,44,12,8,8,6,16,1],[88426046,0,9,2,7,7,46,13,5,19,25,2,3,10,4,28,23,1,1,18,36,44,12,8,8,7,16,1],[88426047,0,9,2,7,7,46,13,5,19,25,2,3,10,4,28,23,1,1,18,36,44,12,7,8,7,16,1],[88426048,0,9,2,7,7,46,12,5,19,25,2,3,10,4,28,23,1,1,18,40,44,12,7,8,7,15,1],[88426049,0,9,2,7,7,51,12,5,18,22,2,3,11,4,28,23,1,1,18,40,44,12,7,9,7,15,1],[88426050,0,9,2,7,7,51,15,6,17,22,2,3,11,4,28,23,1,1,18,36,44,12,7,9,7,15,1],[88426051,0,9,2,7,7,51,16,6,17,23,2,3,11,4,28,23,1,1,14,39,44,12,7,9,7,15,1],[88426052,0,9,2,7,7,51,16,6,17,23,2,3,11,4,28,22,1,1,16,39,44,12,7,9,5,15,1],[88426053,0,9,2,7,7,51,16,4,16,23,2,3,11,4,34,22,1,1,16,39,41,12,8,9,5,15,1],[88426054,0,9,2,7,7,51,16,4,16,23,2,3,11,4,32,22,1,1,16,39,41,12,8,9,5,15,1],[88426055,0,9,2,7,7,51,16,4,16,25,2,3,11,4,32,22,1,1,16,39,41,12,8,9,5,15,1],[88426056,0,9,2,7,7,47,16,4,16,25,2,3,11,4,32,22,1,1,16,39,41,12,8,9,6,15,1],[88426057,0,9,2,7,7,47,16,4,16,25,2,3,11,4,32,22,1,1,15,39,40,12,8,9,6,15,1]];
+const fmt = (n) => n.toLocaleString("en-US");
+const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sep = (i) => (i === 0 ? " " : i === 25 ? ", and " : ", ");
+const plural = (i, n) => LETTERS[i] + (n === 1 ? "" : "'s");
+const claimText = (i, n) => under100(n) + " " + plural(i, n);
+const liesWord = (t) => (t === 1 ? "lie" : "lies");
+const head = (opening, t) => opening + " " + spellCount(t) + " " + liesWord(t) + " " + MIDDLE;
+
+function sentenceText(opening, t, v) {
+  let s = head(opening, t);
+  for (let i = 0; i < 26; i++) s += sep(i) + claimText(i, v[i]);
+  return s + ".";
+}
+
+function letterCounts(text) {
+  const c = new Array(26).fill(0);
+  tally(text, c);
+  return c;
+}
+
+const escapeChar = (ch) => (ch === "&" ? "&amp;" : ch === "<" ? "&lt;" : ch === ">" ? "&gt;" : ch);
+const escapeText = (text) => Array.from(text).map(escapeChar).join("");
+
+function wrapLetters(text) {
+  return Array.from(text).map((ch) => {
+    const code = ch.charCodeAt(0) | 32;
+    return ch.length === 1 && code >= 97 && code <= 122
+      ? '<span class="l" data-l="' + String.fromCharCode(code) + '">' + ch + "</span>"
+      : escapeChar(ch);
+  }).join("");
+}
+
+// A true sentence you can check: point at a claim to mark its letters, click to count them out.
+function liveSentence(el, readout, opening, t, v, atRest) {
+  let html = wrapLetters(head(opening, t));
+  for (let i = 0; i < 26; i++) {
+    html += sep(i) + '<button type="button" class="claim" data-i="' + i + '">' + wrapLetters(claimText(i, v[i])) + "</button>";
+  }
+  el.innerHTML = html + ".";
+  const spans = (i) => el.querySelectorAll('.l[data-l="' + LETTERS[i] + '"]');
+  let timer = null;
+  const clear = () => {
+    clearTimeout(timer);
+    timer = null;
+    el.querySelectorAll(".l.on").forEach((s) => s.classList.remove("on"));
+  };
+  const mark = (i) => {
+    clear();
+    const group = spans(i);
+    group.forEach((s) => s.classList.add("on"));
+    readout.textContent = claimText(i, v[i]) + ". Marked: " + group.length + ".";
+  };
+  const rest = () => {
+    clear();
+    readout.textContent = atRest;
+  };
+  const countOut = (i) => {
+    clear();
+    const group = spans(i);
+    if (reduced()) {
+      mark(i);
+      return;
+    }
+    let k = 0;
+    const delay = Math.max(20, Math.min(90, 1500 / group.length));
+    const step = () => {
+      group[k++].classList.add("on");
+      readout.textContent = k < group.length ? "Counting " + LETTERS[i] + ": " + k : claimText(i, v[i]) + ". Counted: " + k + ".";
+      timer = k < group.length ? setTimeout(step, delay) : null;
+    };
+    step();
+  };
+  const claimAt = (e) => e.target.closest && e.target.closest(".claim");
+  if (el.listeners) el.listeners.abort();
+  el.listeners = new AbortController();
+  const signal = el.listeners.signal;
+  signal.addEventListener("abort", clear);
+  el.addEventListener("pointerover", (e) => {
+    const b = claimAt(e);
+    if (b && e.pointerType !== "touch" && !timer) mark(+b.dataset.i);
+  }, { signal });
+  el.addEventListener("pointerout", (e) => {
+    if (claimAt(e) && e.pointerType !== "touch" && !timer) rest();
+  }, { signal });
+  el.addEventListener("focusin", (e) => {
+    const b = claimAt(e);
+    if (b && b.matches(":focus-visible")) mark(+b.dataset.i);
+  }, { signal });
+  el.addEventListener("focusout", rest, { signal });
+  el.addEventListener("click", (e) => {
+    const b = claimAt(e);
+    if (b) countOut(+b.dataset.i);
+  }, { signal });
+  rest();
+}
+
+const counted = letterCounts(document.getElementById("hero").textContent);
+const trueClaims = OFFICIAL.claims.filter((n, i) => counted[i] === n).length;
+liveSentence(document.getElementById("hero"), document.getElementById("hero-readout"), OPENING, OFFICIAL.lies, OFFICIAL.claims,
+  "Your browser counted the letters when this page loaded: " + trueClaims + " of 26 claims are true. Point at a claim to mark its letters, or click it to count them out.");
+
+// The replay
+const frameEl = document.getElementById("frame");
+const stripEl = document.getElementById("strip");
+const scrub = document.getElementById("scrub");
+const playBtn = document.getElementById("play");
+const stretchButtons = document.querySelectorAll("[data-stretch]");
+stripEl.innerHTML = Array.from(LETTERS).map((l) => '<span class="cell">' + l + "</span>").join("");
+const cells = stripEl.children;
+scrub.max = FRAMES.length - 1;
+
+const nearStart = FRAMES.findIndex((f) => f[1] === 1);
+const lastStart = FRAMES.length - 91;
+const STRETCH_START = { first: 0, near: nearStart, last: lastStart };
+const stretchOf = (idx) => (idx >= lastStart ? "last" : idx >= nearStart ? "near" : "first");
+const CAPTIONS = {
+  first: "It starts by claiming one of every letter, so most claims are false straight away.",
+  near: "One claim away from the truth. Only 15 sentences in the whole walk got this close. Fixing the bad claim changes the letters behind the other 25.",
+  last: "The last stretch looks like every other stretch until the final step.",
+};
+
+let current = 0;
+function showFrame(idx) {
+  current = idx;
+  const f = FRAMES[idx];
+  const t = f[0];
+  const v = f.slice(2);
+  const c = letterCounts(sentenceText(OPENING, t, v));
+  let html = escapeText(head(OPENING, t));
+  let wrong = 0;
+  for (let i = 0; i < 26; i++) {
+    const bad = c[i] !== v[i];
+    if (bad) wrong++;
+    html += sep(i) + (bad
+      ? "<ruby><s>" + under100(v[i]) + "</s><rt>" + under100(c[i]) + "</rt></ruby> " + plural(i, v[i])
+      : claimText(i, v[i]));
+    cells[i].className = "cell" + (bad ? " bad" : "");
+  }
+  if (wrong === 0) for (const cell of cells) cell.className = "cell truth";
+  frameEl.innerHTML = html + ".";
+  document.getElementById("so-far").textContent = fmt(t) + " " + liesWord(t) + " so far";
+  document.getElementById("falses").textContent = wrong ? wrong + " of 26 claims false" : "All 26 claims true";
+  const stretch = stretchOf(idx);
+  document.getElementById("caption").textContent = wrong ? CAPTIONS[stretch] : "One step earlier, 9 claims were false. The walk stops here.";
+  stretchButtons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.stretch === stretch)));
+  scrub.value = idx;
+}
+
+let playing = null;
+function stopPlaying() {
+  clearTimeout(playing);
+  playing = null;
+  playBtn.textContent = "Play";
+}
+function frameDelay(idx) {
+  const stretch = stretchOf(idx);
+  if (stretch === "near") return 1600;
+  if (idx >= FRAMES.length - 6) return 700;
+  return 240;
+}
+function playStep() {
+  if (current >= FRAMES.length - 1) {
+    stopPlaying();
+    return;
+  }
+  showFrame(current + 1);
+  playing = setTimeout(playStep, frameDelay(current));
+}
+playBtn.addEventListener("click", () => {
+  if (playing !== null) {
+    stopPlaying();
+    return;
+  }
+  if (current >= FRAMES.length - 1) showFrame(0);
+  playBtn.textContent = "Pause";
+  playing = setTimeout(playStep, frameDelay(current));
+});
+stretchButtons.forEach((b) => b.addEventListener("click", () => {
+  stopPlaying();
+  showFrame(STRETCH_START[b.dataset.stretch]);
+}));
+scrub.addEventListener("input", () => {
+  stopPlaying();
+  showFrame(+scrub.value);
+});
+showFrame(0);
+
+// Walks run in a worker so the page stays responsive.
+function startWalk(opening, hi, lo, onProgress, onDone, onFail) {
+  const source = document.getElementById("walk-source").textContent
+    + "\nonmessage = (e) => { const [o, m, h, l] = e.data; postMessage({ done: walk(o, m, h, l, (t) => postMessage({ t })) }); };";
+  const worker = new Worker(URL.createObjectURL(new Blob([source], { type: "text/javascript" })));
+  worker.onmessage = (e) => {
+    if (e.data.done) {
+      worker.terminate();
+      onDone(e.data.done);
+    } else {
+      onProgress(e.data.t);
+    }
+  };
+  worker.onerror = () => {
+    worker.terminate();
+    onFail();
+  };
+  worker.postMessage([opening, MIDDLE, hi, lo]);
+  return worker;
+}
+const seconds = (since) => ((performance.now() - since) / 1000).toFixed(1);
+
+const againBtn = document.getElementById("again-go");
+const againOut = document.getElementById("again-readout");
+let againWorker = null;
+againBtn.addEventListener("click", () => {
+  if (againWorker) {
+    againWorker.terminate();
+    againWorker = null;
+    againBtn.textContent = "Walk it again";
+    againOut.textContent = "Stopped.";
+    return;
+  }
+  const started = performance.now();
+  againBtn.textContent = "Stop";
+  againOut.textContent = "Starting.";
+  againWorker = startWalk(OPENING, 0, 20261105,
+    (t) => { againOut.textContent = fmt(t) + " lies so far."; },
+    (r) => {
+      againWorker = null;
+      againBtn.textContent = "Walk it again";
+      againOut.textContent = r.lies === OFFICIAL.lies
+        ? "Your browser stopped at " + fmt(r.lies) + " lies after " + seconds(started) + " seconds. That matches the sentence."
+        : "Your browser stopped at " + fmt(r.lies) + " lies, but the sentence says " + fmt(OFFICIAL.lies) + ". One of them is wrong.";
+    },
+    () => {
+      againWorker = null;
+      againBtn.textContent = "Walk it again";
+      againOut.textContent = "Your browser couldn't run the walk.";
+    });
+});
+
+// Make your own
+const toyInput = document.getElementById("opening");
+const toyGo = document.getElementById("toy-go");
+const toyCopy = document.getElementById("toy-copy");
+const toyProgress = document.getElementById("toy-progress");
+const toyLabel = document.getElementById("toy-label");
+const toyResult = document.getElementById("toy-result");
+const toyReadout = document.getElementById("toy-readout");
+const TOY_REST = "Point at a claim to mark its letters, or click it to count them out.";
+let toyWorker = null;
+let toyText = "";
+function showToy(opening, lies, claims) {
+  toyText = sentenceText(opening, lies, claims);
+  liveSentence(toyResult, toyReadout, opening, lies, claims, TOY_REST);
+}
+showToy(EXAMPLE.opening, EXAMPLE.lies, EXAMPLE.claims);
+function resetToyButton() {
+  toyWorker = null;
+  toyGo.textContent = "Find a true sentence";
+}
+toyGo.addEventListener("click", () => {
+  if (toyWorker) {
+    toyWorker.terminate();
+    resetToyButton();
+    toyProgress.textContent = "Stopped.";
+    return;
+  }
+  const typed = toyInput.value.trim();
+  if (!typed) {
+    toyProgress.textContent = "Type how your sentence begins first.";
+    return;
+  }
+  const opening = typed + " told exactly";
+  const started = performance.now();
+  toyGo.textContent = "Stop";
+  toyProgress.textContent = "Starting.";
+  const parts = crypto.getRandomValues(new Uint32Array(2));
+  toyWorker = startWalk(opening, parts[0], parts[1],
+    (t) => { toyProgress.textContent = fmt(t) + " lies so far."; },
+    (r) => {
+      resetToyButton();
+      toyProgress.textContent = "Found after " + seconds(started) + " seconds.";
+      toyLabel.textContent = "Your sentence, found after " + fmt(r.lies) + " " + liesWord(r.lies);
+      showToy(opening, r.lies, r.claims);
+    },
+    () => {
+      resetToyButton();
+      toyProgress.textContent = "Your browser couldn't run the walk.";
+    });
+});
+toyCopy.addEventListener("click", () => {
+  const selectIt = () => {
+    const range = document.createRange();
+    range.selectNodeContents(toyResult);
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    toyProgress.textContent = "Selected the sentence. Copy it from there.";
+  };
+  if (!navigator.clipboard) {
+    selectIt();
+    return;
+  }
+  navigator.clipboard.writeText(toyText).then(() => { toyProgress.textContent = "Copied."; }, selectIt);
+});
+</script>
+</body></html>

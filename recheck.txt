@@ -1,0 +1,10 @@
+10000000 sentences checked
+20000000 sentences checked
+30000000 sentences checked
+40000000 sentences checked
+50000000 sentences checked
+60000000 sentences checked
+70000000 sentences checked
+80000000 sentences checked
+first true sentence after 88426057 false ones
+Thanks for the journey, Chuck: on your Mac mini, this sentence told exactly eighty-eight million, four hundred twenty-six thousand, fifty-seven lies before it could truthfully say that it has nine a's, two b's, seven c's, seven d's, forty-seven e's, sixteen f's, four g's, sixteen h's, twenty-five i's, two j's, three k's, eleven l's, four m's, thirty-two n's, twenty-two o's, one p, one q, fifteen r's, thirty-nine s's, forty t's, twelve u's, eight v's, nine w's, six x's, fifteen y's, and one z.
